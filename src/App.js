@@ -1,23 +1,41 @@
-import logo from './logo.svg';
+
 import './App.css';
+import Home from './Pages/Home'
+import Signup from './Pages/Signup'
+import Login from './Pages/Login'
+import ViewPost from './Pages/ViewPost'
+import {BrowserRouter as Router,Routes,Route} from 'react-router-dom'
+import { useContext, useEffect } from 'react';
+import { AuthContext } from './store/Context';
+import { auth} from './firebase/config';
+import { onAuthStateChanged } from 'firebase/auth';
+import Create from './Components/Create/Create';
+import PostContextProvider from './store/PostContext';
 
 function App() {
+  const {user,setUser} = useContext(AuthContext)
+  useEffect(() =>{
+    console.log(user)
+    onAuthStateChanged(auth,(user) => {
+      setUser(user)
+    })
+  },[user,setUser])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+      <PostContextProvider>
+        <Router>
+        <Routes>
+          <Route path='/' element={<Home/>}/>
+          <Route path='/signup' element={<Signup/>}/>
+          <Route path='/login' element={<Login/>}/>
+          <Route path='/sell' element={<Create/>}/>
+          <Route path='/view' element={<ViewPost/>}/>
+        </Routes>
+      </Router>
+      </PostContextProvider>
+      
+      
     </div>
   );
 }
